@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <title>Haze Tracker</title>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#26334f"/>
+      <stop offset="0.55" stop-color="#86697a"/>
+      <stop offset="1" stop-color="#eaa45c"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.5" cy="0.45" r="0.55">
+      <stop offset="0" stop-color="#fff3c9"/>
+      <stop offset="1" stop-color="#ffc063"/>
+    </radialGradient>
+    <clipPath id="round"><rect width="512" height="512" rx="116"/></clipPath>
+  </defs>
+  <g clip-path="url(#round)">
+    <rect width="512" height="512" fill="url(#sky)"/>
+    <circle cx="256" cy="204" r="108" fill="url(#sun)"/>
+    <rect x="-20" y="226" width="552" height="30" rx="15" fill="#dcd8de" opacity="0.42"/>
+    <rect x="-20" y="276" width="552" height="30" rx="15" fill="#dcd8de" opacity="0.64"/>
+    <rect x="-20" y="326" width="552" height="30" rx="15" fill="#e8e5ea" opacity="0.82"/>
+    <rect x="-20" y="376" width="552" height="160" fill="#efecf0" opacity="0.95"/>
+  </g>
+</svg>

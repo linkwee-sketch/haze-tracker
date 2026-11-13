@@ -2,44 +2,97 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hello, World</title>
-  <style>
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: #eaf6ff;
-      font-family: system-ui, sans-serif;
-    }
-    h1 { color: #2d5a27; margin: 0 0 1rem; }
-    svg { width: min(320px, 80vw); height: auto; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Haze Tracker SG</title>
+  <meta name="description" content="Live PSI and PM2.5 readings for Singapore's regions, with threshold alerts.">
+  <meta name="theme-color" content="#0f1b2d">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Haze SG">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Hello, World!</h1>
-  <svg viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A pink flower">
-    <!-- stem -->
-    <path d="M100 150 C95 200 105 250 100 295" stroke="#3a8a3a" stroke-width="6" fill="none" stroke-linecap="round"/>
-    <!-- leaves -->
-    <path d="M100 230 C70 215 50 225 40 245 C65 255 90 250 100 230 Z" fill="#4caf50"/>
-    <path d="M100 200 C130 185 150 195 160 215 C135 225 110 220 100 200 Z" fill="#4caf50"/>
-    <!-- petals -->
-    <g fill="#ff7eb6" stroke="#e0508f" stroke-width="2" transform="translate(100 100)">
-      <ellipse cx="0" cy="-38" rx="20" ry="32"/>
-      <ellipse cx="0" cy="-38" rx="20" ry="32" transform="rotate(45)"/>
-      <ellipse cx="0" cy="-38" rx="20" ry="32" transform="rotate(90)"/>
-      <ellipse cx="0" cy="-38" rx="20" ry="32" transform="rotate(135)"/>
-      <ellipse cx="0" cy="-38" rx="20" ry="32" transform="rotate(180)"/>
-      <ellipse cx="0" cy="-38" rx="20" ry="32" transform="rotate(225)"/>
-      <ellipse cx="0" cy="-38" rx="20" ry="32" transform="rotate(270)"/>
-      <ellipse cx="0" cy="-38" rx="20" ry="32" transform="rotate(315)"/>
-    </g>
-    <!-- center -->
-    <circle cx="100" cy="100" r="18" fill="#ffd23f" stroke="#e0a800" stroke-width="2"/>
-  </svg>
+  <header class="top">
+    <div>
+      <h1>Haze Tracker</h1>
+      <p class="sub">Singapore · NEA data</p>
+    </div>
+    <button id="refresh" class="icon-btn" type="button" aria-label="Refresh readings">↻</button>
+  </header>
+
+  <main>
+    <p id="status" class="status" role="status" aria-live="polite">Loading…</p>
+
+    <section id="overall" class="overall" aria-label="Overall reading" hidden></section>
+
+    <section aria-labelledby="regions-h">
+      <h2 id="regions-h">By region</h2>
+      <div id="regions" class="grid"></div>
+    </section>
+
+    <section class="card" aria-labelledby="alerts-h">
+      <h2 id="alerts-h">Alerts</h2>
+      <form id="alert-form" novalidate>
+        <label class="switch-row">
+          <input type="checkbox" id="enabled">
+          <span>Notify me when the level reaches my threshold</span>
+        </label>
+
+        <div class="field">
+          <label for="metric">Measure</label>
+          <select id="metric">
+            <option value="psi24">24-hr PSI (official PSI)</option>
+            <option value="pm25_1h">1-hr PM2.5 (µg/m³)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="region">Region</label>
+          <select id="region">
+            <option value="any">Any region (highest)</option>
+            <option value="north">North</option>
+            <option value="west">West</option>
+            <option value="central">Central</option>
+            <option value="east">East</option>
+            <option value="south">South</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="threshold">Threshold</label>
+          <input id="threshold" type="number" inputmode="numeric" min="1" max="999" step="1" value="100">
+          <p id="bands-hint" class="hint"></p>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn primary">Save alert</button>
+          <button type="button" id="test-notif" class="btn">Send test</button>
+        </div>
+        <p id="form-msg" class="hint" role="status" aria-live="polite"></p>
+      </form>
+      <details class="how">
+        <summary>How alerts work</summary>
+        <p>The app checks the latest NEA readings every few minutes while it is open, and you get one notification when the level reaches your threshold. You are alerted again only after it has dropped back below.</p>
+        <p>With no server involved, alerts while the app is closed depend on your browser: Chrome on Android can check in the background for an installed app (not on a fixed schedule). iPhones and iPads cannot check in the background.</p>
+      </details>
+    </section>
+
+    <section id="install" class="card" hidden>
+      <h2>Add to home screen</h2>
+      <p id="install-text" class="hint"></p>
+      <button id="install-btn" type="button" class="btn primary" hidden>Install app</button>
+    </section>
+  </main>
+
+  <footer>
+    <p>Readings are published by the National Environment Agency (NEA) hourly and may be revised. Contains information from the Real-time PSI and PM2.5 datasets accessed via the data.gov.sg API, made available under the <a href="https://data.gov.sg/open-data-licence" rel="noopener">Singapore Open Data Licence</a>.</p>
+  </footer>
+
+  <script src="haze.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

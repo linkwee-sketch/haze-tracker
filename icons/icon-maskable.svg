@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <title>Haze Tracker (maskable)</title>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#26334f"/>
+      <stop offset="0.55" stop-color="#86697a"/>
+      <stop offset="1" stop-color="#eaa45c"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.5" cy="0.45" r="0.55">
+      <stop offset="0" stop-color="#fff3c9"/>
+      <stop offset="1" stop-color="#ffc063"/>
+    </radialGradient>
+  </defs>
+  <!-- Full-bleed square; the sun and first bands sit inside the central 80% safe zone. -->
+  <rect width="512" height="512" fill="url(#sky)"/>
+  <circle cx="256" cy="214" r="96" fill="url(#sun)"/>
+  <rect x="-20" y="234" width="552" height="28" rx="14" fill="#dcd8de" opacity="0.42"/>
+  <rect x="-20" y="280" width="552" height="28" rx="14" fill="#dcd8de" opacity="0.64"/>
+  <rect x="-20" y="326" width="552" height="28" rx="14" fill="#e8e5ea" opacity="0.82"/>
+  <rect x="-20" y="372" width="552" height="160" fill="#efecf0" opacity="0.95"/>
+</svg>
